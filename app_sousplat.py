@@ -21,22 +21,22 @@ def estimar_peso_fio_retangular(comprimento_cm, largura_cm, area_referencia=36*3
 # Função para calcular o custo final
 def calcular_valor_final(peso_estimado, valor_rolo, peso_rolo, mao_de_obra_hora, tempo_gasto, quantidade, dificuldade):
     # Custo dos materiais com fator de segurança
-    custo_material = (peso_estimado / peso_rolo) * valor_rolo * 1.8
+    custo_material = (peso_estimado / peso_rolo) * valor_rolo * 1.15
 
     # Custo da mão de obra
     custo_mao_de_obra = mao_de_obra_hora * tempo_gasto
 
     # Multiplicador de dificuldade
-    multiplicador_dificuldade = {"Baixo": 1.1, "Médio": 1.3, "Alto": 1.5}[dificuldade]
+    multiplicador_dificuldade = {"Baixo": 1.0, "Médio": 1.2, "Alto": 1.4}[dificuldade]
 
     # Cálculo do valor final
     valor_final = (custo_material + custo_mao_de_obra) * multiplicador_dificuldade * quantidade
     return round(valor_final, 2)
 
 # Interface Streamlit
-st.set_page_config(page_title="Calculadora de Fio e Valor Final para Peças Artesanais", page_icon="🧶")
+st.set_page_config(page_title="Calculadora Valor Final para Peças Artesanais", page_icon="🧶")
 
-st.title("🧶 Calculadora de Fio e Valor Final para Peças Artesanais")
+st.title("🧶 Calculadora Valor Final para Peças Artesanais")
 
 st.markdown("""
 Informe os dados abaixo para estimar o peso do fio necessário e o valor final da peça com base nos custos de materiais, mão de obra e dificuldade.
@@ -65,11 +65,16 @@ dificuldade = st.selectbox("Nível de dificuldade", ["Baixo", "Médio", "Alto"])
 # Botão para calcular
 if st.button("Calcular"):
     valor_final = calcular_valor_final(peso_estimado, valor_rolo, peso_rolo, mao_de_obra_hora, tempo_gasto, quantidade, dificuldade)
+    
+    # Cálculo da quantidade de rolos de fio necessários
+    rolos_necessarios = math.ceil((peso_estimado * quantidade) / peso_rolo)
+    rolos_necessarios = round((peso_estimado * quantidade) / peso_rolo, 1)
 
     if tipo_peca == "Sousplat (Redondo)":
         st.success(f"""
         📏 **Diâmetro:** {diametro} cm  
         🧵 **Peso estimado do fio:** {peso_estimado} g  
+        📦 **Rolos de fio necessários:** {rolos_necessarios}  
         💰 **Valor final estimado:** R$ {valor_final}
         """)
     else:
@@ -77,9 +82,10 @@ if st.button("Calcular"):
         📏 **Comprimento:** {comprimento} cm  
         📐 **Largura:** {largura} cm  
         🧵 **Peso estimado do fio:** {peso_estimado} g  
+        📦 **Rolos de fio necessários:** {rolos_necessarios}  
         💰 **Valor final estimado:** R$ {valor_final}
         """)
 
 # Rodapé
 st.markdown("---")
-st.caption("Criado para apoiar no cálculo artesanal de peças artesanais. 💙")
+st.caption("Criado para cálculo de construção de peças de crochê. 💙")
